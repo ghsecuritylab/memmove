@@ -5,6 +5,7 @@ FPGA IP Core for moving data between modules.
 
 Module must be used with the **Commblock**.
 
+```
                                                                   +---------+
                                                                   |         |
                                                             +<----+ Mod. 1  |
@@ -29,3 +30,4 @@ Module must be used with the **Commblock**.
                                                           |       |         |
                                                           +------->         |
                                                                   +---------+
+```
