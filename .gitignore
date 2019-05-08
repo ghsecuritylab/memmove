@@ -1,2 +1,5 @@
 *example_design/*
 !example_design/*.tcl
+!example_design/utils/*
+!example_design/IPs/*
+*example_test/*
