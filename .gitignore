@@ -1,5 +1,6 @@
 *example_design/*
 !example_design/*.tcl
 !example_design/utils/*
-!example_design/IPs/*
+!example_design/IPs/*.xci
+!example_design/IPs/synth/*
 *example_test/*
