@@ -27,12 +27,12 @@
 #
 # 3. The following remote source files that were added to the original project:-
 #
-#    "../modules/incoming_data_fifo.xci"
-#    "../memmv_params.vhd"
-#    "../modules/fsm_cmd.vhd"
-#    "../modules/fsm_move.vhd"
-#    "../memmv.vhd"
-#    "../simple_interconnect.vhd"
+#    "../hdl/modules/IPs/incoming_data_fifo.xci"
+#    "../hdl/memmv_params.vhd"
+#    "../hdl/modules/fsm_cmd.vhd"
+#    "../hdl/modules/fsm_move.vhd"
+#    "../hdl/memmv.vhd"
+#    "../hdl/simple_interconnect.vhd"
 #
 #*****************************************************************************************
 
@@ -164,12 +164,12 @@ update_ip_catalog -rebuild
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
- [file normalize "${origin_dir}/../modules/incoming_data_fifo.xci"] \
- [file normalize "${origin_dir}/../memmv_params.vhd"] \
- [file normalize "${origin_dir}/../modules/fsm_cmd.vhd"] \
- [file normalize "${origin_dir}/../modules/fsm_move.vhd"] \
- [file normalize "${origin_dir}/../memmv.vhd"] \
- [file normalize "${origin_dir}/../simple_interconnect.vhd"] \
+ [file normalize "${origin_dir}/../hdl/modules/IPs/incoming_data_fifo.xci"] \
+ [file normalize "${origin_dir}/../hdl/memmv_params.vhd"] \
+ [file normalize "${origin_dir}/../hdl/modules/fsm_cmd.vhd"] \
+ [file normalize "${origin_dir}/../hdl/modules/fsm_move.vhd"] \
+ [file normalize "${origin_dir}/../hdl/memmv.vhd"] \
+ [file normalize "${origin_dir}/../hdl/simple_interconnect.vhd"] \
 ]
 add_files -norecurse -fileset $obj $files
 
@@ -180,37 +180,37 @@ set files [list \
 set imported_files [import_files -fileset sources_1 $files]
 
 # Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/../modules/incoming_data_fifo.xci"
+set file "$origin_dir/../hdl/modules/IPs/incoming_data_fifo.xci"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
 set_property -name "registered_with_manager" -value "1" -objects $file_obj
 
-set file "$origin_dir/../memmv_params.vhd"
+set file "$origin_dir/../hdl/memmv_params.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 set_property -name "library" -value "work" -objects $file_obj
 
-set file "$origin_dir/../modules/fsm_cmd.vhd"
+set file "$origin_dir/../hdl/modules/fsm_cmd.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 set_property -name "library" -value "work" -objects $file_obj
 
-set file "$origin_dir/../modules/fsm_move.vhd"
+set file "$origin_dir/../hdl/modules/fsm_move.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 set_property -name "library" -value "work" -objects $file_obj
 
-set file "$origin_dir/../memmv.vhd"
+set file "$origin_dir/../hdl/memmv.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 set_property -name "library" -value "work" -objects $file_obj
 
-set file "$origin_dir/../simple_interconnect.vhd"
+set file "$origin_dir/../hdl/simple_interconnect.vhd"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
@@ -228,7 +228,7 @@ set_property -name "library" -value "work" -objects $file_obj
 set obj [get_filesets sources_1]
 set_property -name "top" -value "memmv" -objects $obj
 set_property -name "top_arch" -value "structural" -objects $obj
-set_property -name "top_file" -value "../memmv.vhd" -objects $obj
+set_property -name "top_file" -value "../hdl/memmv.vhd" -objects $obj
 set_property -name "top_lib" -value "work" -objects $obj
 
 # Create 'constrs_1' fileset (if not found)
@@ -257,28 +257,28 @@ set obj [get_filesets sim_1]
 set obj [get_filesets sim_1]
 set_property -name "top" -value "memmv" -objects $obj
 set_property -name "top_arch" -value "structural" -objects $obj
-set_property -name "top_file" -value "../memmv.vhd" -objects $obj
+set_property -name "top_file" -value "../hdl/memmv.vhd" -objects $obj
 set_property -name "top_lib" -value "work" -objects $obj
 
 
 # Adding sources referenced in BDs, if not already added
 if { [get_files simple_interconnect.vhd] == "" } {
-  import_files -quiet -fileset sources_1 ../simple_interconnect.vhd
+  import_files -quiet -fileset sources_1 ../hdl/simple_interconnect.vhd
 }
 if { [get_files incoming_data_fifo.xci] == "" } {
-  import_files -quiet -fileset sources_1 ../modules/incoming_data_fifo.xci
+  import_files -quiet -fileset sources_1 ../hdl/modules/IPs/incoming_data_fifo.xci
 }
 if { [get_files memmv_params.vhd] == "" } {
-  import_files -quiet -fileset sources_1 ../memmv_params.vhd
+  import_files -quiet -fileset sources_1 ../hdl/memmv_params.vhd
 }
 if { [get_files fsm_cmd.vhd] == "" } {
-  import_files -quiet -fileset sources_1 ../modules/fsm_cmd.vhd
+  import_files -quiet -fileset sources_1 ../hdl/modules/fsm_cmd.vhd
 }
 if { [get_files fsm_move.vhd] == "" } {
-  import_files -quiet -fileset sources_1 ../modules/fsm_move.vhd
+  import_files -quiet -fileset sources_1 ../hdl/modules/fsm_move.vhd
 }
 if { [get_files memmv.vhd] == "" } {
-  import_files -quiet -fileset sources_1 ../memmv.vhd
+  import_files -quiet -fileset sources_1 ../hdl/memmv.vhd
 }
 if { [get_files delay_1.vhd] == "" } {
   import_files -quiet -fileset sources_1 ./utils/delay_1.vhd
