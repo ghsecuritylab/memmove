@@ -31,3 +31,9 @@ A simplified diagram is shown below:
   (regs and                                                          (FIFOs only)
    BRAM only)
 ```
+
+## Generation:
+On _Vivado_ `tcl` console simply `source example.tcl`.
+This will generate a subfolder with the vivado project ready to be sinthesized/implemented.
+
+Examples using other tools from other vendors will be added over time.
