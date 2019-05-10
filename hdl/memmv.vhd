@@ -1,5 +1,7 @@
 --------------------------------------------------------------------------------
--- memmv
+--* memmv.vhd
+--* @brief A module that executes a UDMA instruction for data moving within 
+-- a system.--
 --
 -- Memory mover. It executes a DMA instruction to move memory from source to
 -- destination. 
@@ -11,8 +13,8 @@
 -- 
 -- The progress of a DMA execution can be monitored with done and busy flags.
 --
--- Authors: E. Marchi - M. Cervetto
--- Revisión: 0.1 -- initial
+--* @author E. Marchi, M. Cervetto
+--* @version 0.1 -- Initial
 --------------------------------------------------------------------------------
 
 library IEEE;
@@ -25,21 +27,31 @@ entity memmv is
         clk : in std_logic;
         rst : in std_logic;
 
-        -- command side
+        -- slave side
+        --* Start parsing command when setted
         start     : in  std_logic;
+        --* Command data input
         cmd_in    : in  std_logic_vector(CMD_DATA_WIDTH - 1 downto 0);
+        --* Address from where the command is read
         cmd_addr  : out std_logic_vector(CMD_ADDR_WIDTH - 1 downto 0);
+        --* Outs '1' in order to read command
         cmd_fetch : out std_logic;
 
-        -- fabric side
+        -- master side
+        --* Write enable input for peripheral
         wr_en   : in  std_logic;
+        --* Data input for peripheral
         din     : in  std_logic_vector(BUS_DATA_WIDTH - 1 downto 0);
+        --* Data valid for peripheral
         dv      : out std_logic;
+        --* Data output for peipheral
         dout    : out std_logic_vector(BUS_DATA_WIDTH - 1 downto 0);
+        --* Address output for reading/writing data from/to peripheral
         address : out std_logic_vector(BUS_ADDR_WIDTH - 1 downto 0);
+        --* Read request output
         rd_rq   : out std_logic;
 
-        -- Status flags
+        --+ Status flags
         busy        : out std_logic;
         done        : out std_logic
 
