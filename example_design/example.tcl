@@ -910,13 +910,6 @@ proc cr_bd_test_design { parentCell } {
   # Create instance: xlslice_0, and set properties
   set xlslice_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_0 ]
 
-  # Create instance: xlslice_1, and set properties
-  set xlslice_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice:1.0 xlslice_1 ]
-  set_property -dict [ list \
-   CONFIG.DIN_FROM {9} \
-   CONFIG.DOUT_WIDTH {10} \
- ] $xlslice_1
-
   # Create interface connections
   connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
   connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
@@ -934,7 +927,7 @@ proc cr_bd_test_design { parentCell } {
   connect_bd_net -net delay_1_1_s_delayed [get_bd_pins delay_1_1/s_delayed] [get_bd_pins simple_interconnect_0/we_s1]
   connect_bd_net -net memmv_0_address [get_bd_pins memmv_0/address] [get_bd_pins simple_interconnect_0/addr_m]
   connect_bd_net -net memmv_0_busy [get_bd_pins memmv_0/busy] [get_bd_pins xlconcat_0/In0]
-  connect_bd_net -net memmv_0_cmd_addr [get_bd_pins memmv_0/cmd_addr] [get_bd_pins xlslice_1/Din]
+  connect_bd_net -net memmv_0_cmd_addr [get_bd_pins memmv_0/cmd_addr] [get_bd_pins comblock_0/ram_addr_i]
   connect_bd_net -net memmv_0_done [get_bd_pins memmv_0/done] [get_bd_pins xlconcat_0/In1]
   connect_bd_net -net memmv_0_dout [get_bd_pins memmv_0/dout] [get_bd_pins simple_interconnect_0/din_m]
   connect_bd_net -net memmv_0_dv [get_bd_pins memmv_0/dv] [get_bd_pins simple_interconnect_0/wr_en_m]
@@ -956,7 +949,6 @@ proc cr_bd_test_design { parentCell } {
   connect_bd_net -net xlconcat_0_dout [get_bd_pins comblock_0/reg0_i] [get_bd_pins xlconcat_0/dout]
   connect_bd_net -net xlconstant_0_dout [get_bd_pins xlconcat_0/In2] [get_bd_pins xlconstant_0/dout]
   connect_bd_net -net xlslice_0_Dout [get_bd_pins memmv_0/start] [get_bd_pins xlslice_0/Dout]
-  connect_bd_net -net xlslice_1_Dout [get_bd_pins comblock_0/ram_addr_i] [get_bd_pins xlslice_1/Dout]
 
   # Create address segments
   create_bd_addr_seg -range 0x00010000 -offset 0x43C00000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs comblock_0/S00_AXI/S00_AXI_reg] SEG_comblock_0_S00_AXI_reg
