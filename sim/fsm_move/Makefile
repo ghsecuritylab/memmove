@@ -6,7 +6,7 @@ SIM=ghdl
 
 VHDL_SOURCES=$(PROJECT_DIR)/hdl/memmv_params.vhd \
 			 $(PROJECT_DIR)/hdl/modules/fsm_move.vhd \
-			 $(PROJECT_DIR)/hdl/modules/fifo/fifo_generator_v9_3.vhd \
+			 $(PROJECT_DIR)/sim/IPs/incoming_data_fifo.vhd \
 			 
 TOPLEVEL=fsm_move
 

@@ -59,7 +59,7 @@ end entity;
 
 architecture fsm of fsm_move is
 
-  component fifo_generator_v9_3
+  component incoming_data_fifo
     port (
       clk        : in  std_logic;
       srst       : in  std_logic;
@@ -247,7 +247,7 @@ begin
 
   max_addr_reached <= '1' when count = (unsigned(dma_instr.move_size) - 1) else '0';
 
-  incoming_data_fifo : fifo_generator_v9_3
+  incoming_data_fifo_0 : incoming_data_fifo
     port map (
       clk        => clk,
       srst       => rst,
