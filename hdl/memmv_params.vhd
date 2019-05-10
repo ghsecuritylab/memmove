@@ -15,7 +15,7 @@ package memmv_params is
   constant BUS_DATA_WIDTH : natural                           := 32;
   constant BUS_ADDR_WIDTH : natural                           := 32;
 
-  constant CMD_DATA_WIDTH : natural                           := BUS_ADDR_WIDTH;
+  constant CMD_DATA_WIDTH : natural                           := 32; --must be equal to BUS_ADDR_WIDTH
   constant CMD_ADDR_WIDTH : natural                           := 10;
   constant CMD_BASE_ADDR  : std_logic_vector(CMD_ADDR_WIDTH - 1 downto 0) := (others => '0');
   

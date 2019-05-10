@@ -20,7 +20,7 @@ UDMA:
 ```
 
 ### Usage
-The core will start parsing an instruction when the `start` signal is asserted. The instruction fields are meant to be read from a RAM memory (for example, the BRAM included within the `commblock`) in contiguous addresses.
+The core will start parsing an instruction when the `start` signal is asserted. The instruction fields are meant to be read from a RAM memory (for example, the BRAM included within the `comblock`) in contiguous addresses.
 When parsing starts, the `busy`signal is asserted. Consecuently, when instruction was executed, the `done` flag rises for one clock.
 
 Within the code a `simple_interconnect` module is provided in order to assign slaves (i.e. organize the memory map). Check the _example_design_ in order to clarify usage.
