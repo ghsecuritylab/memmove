@@ -34,7 +34,7 @@ Within the code a `simple_interconnect` module is provided in order to assign sl
 The simulation is guided via [cocotb](https://github.com/potentialventures/cocotb). 
 cocotb execution is coordinated with a series of Makefiles and the simulation with the associated testbenchs is performed on a python framework. For installing and bootstraping cocotb, follow the steps provided in the respective documentation [site](https://cocotb.readthedocs.io/en/latest/quickstart.html).
 
-Furthermore, cocotb needs a simulator. In particular, GHDL was used because of its availability, performance, conformance to standards, and open-sourceness. It is available [here](https://github.com/ghdl/ghdl). You are invited to used other simulator, but that requires tweaking the cocotb Makefiles.
+Furthermore, cocotb needs a simulator. In particular, GHDL was used because of its availability, performance, conformance to standards, and open-sourceness. It is available [here](https://github.com/ghdl/ghdl). You are invited to use other simulator, but that requires tweaking the cocotb Makefiles.
 
 To start the simulation just do:
 
