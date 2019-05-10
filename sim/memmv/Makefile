@@ -13,8 +13,6 @@ VHDL_SOURCES= $(PROJECT_DIR)/hdl/memmv_params.vhd \
 
 TOPLEVEL=memmv
 
-XILINXCORELIB := $(PROJECT_DIR)/../xilinx/ghdl/xilinx-ise
-
 EXTRA_ARGS= --ieee=synopsys -fexplicit -P$(XILINXCORELIB) --warn-no-binding
 SIM_ARGS=  --wave=memmv.ghw
 MODULE ?= test

@@ -1,4 +1,7 @@
 
+
+export XILINXCORELIB ?= $(PROJECT_DIR)/../xilinx/ghdl/xilinx-ise
+
 export PROJECT_DIR := $(PWD)
 export PYTHONPATH:=$(realpath $(PROJECT_DIR)):$(PYTHONPATH)
 

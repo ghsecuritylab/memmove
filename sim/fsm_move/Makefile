@@ -10,8 +10,6 @@ VHDL_SOURCES=$(PROJECT_DIR)/hdl/memmv_params.vhd \
 			 
 TOPLEVEL=fsm_move
 
-XILINXCORELIB := $(PROJECT_DIR)/../xilinx/ghdl/xilinx-ise
-
 EXTRA_ARGS= --ieee=synopsys -fexplicit -P$(XILINXCORELIB) --warn-no-binding
 SIM_ARGS=  --wave=fsm_move.ghw
 MODULE ?= test
