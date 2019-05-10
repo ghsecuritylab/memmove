@@ -1,11 +1,21 @@
-------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- fsm_cmd
 --
--- 
+-- This FSM reads the command placed in BASE_ADDR. When '1' is asserted on start
+-- it loads the command in an internal register of the unit. The load is 
+-- performed reading BASE_ADDR and the 3 next positions.
+-- The command must have the following form: (BUS_ADDR_WIDTH=32 widths are used 
+-- as an example)
 --
--- Autor: E. Marchi - M. Cervetto
--- Revisión: 0.1 -- inicial
--------------------------------------------------------------------------------------
+--                   HIGH          | LOW
+-- BASE_ADDR    :          SRC_ADDRESS(32)
+-- BASE_ADDR +1 :          DST_ADDRESS(32)
+-- BASE_ADDR +2 :    SRC_INCR(16) | DST_INCR(16)
+-- BASE_ADDR +3 :          MOVE_SIZE(32)
+
+-- Authors: E. Marchi - M. Cervetto
+-- Revision: 0.1 -- initial
+--------------------------------------------------------------------------------
 
 library IEEE;
 use IEEE.std_logic_1164.all;
@@ -14,10 +24,10 @@ use work.memmv_params.all;
 
 entity fsm_cmd is
   generic (
-    DATA_WIDTH : natural                           := 32;
-    ADDR_WIDTH : natural                           := 32;
-    BASE_ADDR  : std_logic_vector(32 - 1 downto 0) := (others => '0')
-    );                                  -- TODO: package
+    DATA_WIDTH : natural                           := CMD_DATA_WIDTH;
+    ADDR_WIDTH : natural                           := CMD_ADDR_WIDTH;
+    BASE_ADDR  : std_logic_vector(CMD_ADDR_WIDTH - 1 downto 0) := (others => '0')
+    );
   port (
     clk : in std_logic;
     rst : in std_logic;
@@ -30,7 +40,13 @@ entity fsm_cmd is
 
     -- move side
     start_move  : out std_logic;
-    dma_instr   : out dma_instr_type
+    
+    -- instruction
+    source_addr : out std_logic_vector(BUS_ADDR_WIDTH - 1 downto 0);
+    dest_addr   : out std_logic_vector(BUS_ADDR_WIDTH - 1 downto 0);
+    source_incr : out std_logic_vector(BUS_ADDR_WIDTH/2 - 1 downto 0);
+    dest_incr   : out std_logic_vector(BUS_ADDR_WIDTH/2 - 1 downto 0);
+    move_size   : out std_logic_vector(BUS_ADDR_WIDTH - 1 downto 0)
     );
 end entity;
 
@@ -41,6 +57,8 @@ architecture fsm of fsm_cmd is
 
   signal wr_register : std_logic_vector(3 downto 0);
 
+  signal dma_instr : dma_instr_type;
+  
 begin
 
 -- FSM register
@@ -163,5 +181,11 @@ begin
       end if;
     end if;
   end process;
+
+  source_addr <= dma_instr.source_addr;
+  dest_addr   <= dma_instr.dest_addr;
+  source_incr <= dma_instr.source_incr;
+  dest_incr   <= dma_instr.dest_incr;
+  move_size   <= dma_instr.move_size;
 
 end architecture;

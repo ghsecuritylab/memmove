@@ -1,11 +1,22 @@
-------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- fsm_move
 --
+-- This FSM makes the memory payload movement. It receives the DMA instruction 
+-- and the execution begins when start is asserted. 
+-- The operation progress can be monitored with busy and done signals.
+-- Contains an internal FIFO for temporary storage. 
 --
+-- The execution of a DMA instruction is performed in 3 phases:
+-- READ data from source memory
+-- WAIT for data to arrive and keep READING 
+-- When internal FIFO contains the requested data, begin transfer to destination
 --
--- Autor: E. Marchi - M. Cervetto
--- Revisión: 0.1 -- inicial
--------------------------------------------------------------------------------------
+-- 
+-- TODO: move size > 1024 words
+--
+-- Authors: E. Marchi - M. Cervetto
+-- Revision: 0.1 -- initial
+--------------------------------------------------------------------------------
 
 library IEEE;
 use IEEE.std_logic_1164.all;
@@ -14,24 +25,32 @@ use work.memmv_params.all;
 
 entity fsm_move is
   generic (
-    DATA_WIDTH : natural := 32;
-    ADDR_WIDTH : natural := 32
+    DATA_WIDTH : natural := BUS_DATA_WIDTH;
+    ADDR_WIDTH : natural := BUS_ADDR_WIDTH
     );
   port (
     clk : in std_logic;
     rst : in std_logic;
 
     -- fabric side
+    address : out std_logic_vector(ADDR_WIDTH - 1 downto 0);
+    -- read signals
+    rd_rq   : out std_logic;
     wr_en   : in  std_logic;
     din     : in  std_logic_vector(DATA_WIDTH - 1 downto 0);
+
+    --write signals
     dv      : out std_logic;
     dout    : out std_logic_vector(DATA_WIDTH - 1 downto 0);
-    address : out std_logic_vector(ADDR_WIDTH - 1 downto 0);
-    rd_rq   : out std_logic;
-
+    
     -- instruction side
     start       : in  std_logic;
-    dma_instr   : in dma_instr_type;
+    
+    source_addr : in std_logic_vector(BUS_ADDR_WIDTH - 1 downto 0);
+    dest_addr   : in std_logic_vector(BUS_ADDR_WIDTH - 1 downto 0);
+    source_incr : in std_logic_vector(BUS_ADDR_WIDTH/2 - 1 downto 0);
+    dest_incr   : in std_logic_vector(BUS_ADDR_WIDTH/2 - 1 downto 0);
+    move_size   : in std_logic_vector(BUS_ADDR_WIDTH - 1 downto 0);
     -- Status flags
     busy        : out std_logic;
     done        : out std_logic
@@ -40,7 +59,7 @@ end entity;
 
 architecture fsm of fsm_move is
 
-  component fifo_generator_0
+  component fifo_generator_v9_3
     port (
       clk        : in  std_logic;
       srst       : in  std_logic;
@@ -60,7 +79,7 @@ architecture fsm of fsm_move is
   type count_mode_type is (ZERO, INCR, HOLD);
   signal count_mode            : count_mode_type;
 
-  signal en_incr          : std_logic;
+  signal incr_address     : std_logic;
   signal address_reg      : unsigned(ADDR_WIDTH - 1 downto 0);
   signal address_next     : unsigned(ADDR_WIDTH - 1 downto 0);
   signal address_base     : unsigned(ADDR_WIDTH - 1 downto 0);
@@ -72,8 +91,17 @@ architecture fsm of fsm_move is
   signal rd_fifo        : std_logic;
   signal chunk_received : std_logic;
   signal fifo_count     : std_logic_vector(9 downto 0);
+
+  signal dma_instr : dma_instr_type;
+
 begin
 
+  dma_instr.source_addr <= source_addr;
+  dma_instr.dest_addr <= dest_addr;
+  dma_instr.source_incr <= source_incr;
+  dma_instr.dest_incr <= dest_incr;
+  dma_instr.move_size <= move_size;
+  
 -- FSM register
   process(clk)
   begin
@@ -127,7 +155,7 @@ begin
   process(state_reg, start, max_addr_reached, dma_instr, chunk_received)
 
   begin
-    en_incr      <= '0';
+    incr_address <= '0';
     step         <= (others => '0');
     rd_rq        <= '0';
     busy         <= '1';
@@ -141,42 +169,42 @@ begin
       when IDLE =>
         busy <= '0';
         if (start = '1') then
-          busy       <= '1';
-          rd_rq      <= '1';
-          en_incr    <= '1';
-          step       <= dma_instr.source_incr;
-          count_mode <= INCR;
+          busy         <= '1';
+          rd_rq        <= '1';
+          incr_address <= '1';
+          step         <= dma_instr.source_incr;
+          count_mode   <= INCR;
         end if;
 
       when READ_SRC =>
-        count_mode <= INCR;
-        rd_rq      <= '1';
-        en_incr    <= '1';
-        step       <= dma_instr.source_incr;
+        count_mode   <= INCR;
+        rd_rq        <= '1';
+        incr_address <= '1';
+        step         <= dma_instr.source_incr;
 
         if (max_addr_reached = '1') then
-          count_mode <= ZERO;
-          en_incr    <= '0';
+          count_mode   <= ZERO;
+          incr_address <= '0';
         end if;
 
 
       when WAIT_DATA =>
         if (chunk_received = '1') then
           address_base <= unsigned(dma_instr.dest_addr);
-          step    <= dma_instr.dest_incr;
-          rd_fifo <= '1';
+          step         <= dma_instr.dest_incr;
+          rd_fifo      <= '1';
         end if;
 
       when WRITE_DST =>
-        step       <= dma_instr.dest_incr;
-        rd_fifo    <= '1';
-        en_incr    <= '1';
-        count_mode <= INCR;
+        step         <= dma_instr.dest_incr;
+        rd_fifo      <= '1';
+        incr_address <= '1';
+        count_mode   <= INCR;
         if (max_addr_reached = '1') then
           count_mode <= ZERO;
-          en_incr    <= '0';
-          rd_fifo    <= '0';
-          done_int   <= '1';
+          incr_address <= '0';
+          rd_fifo      <= '0';
+          done_int     <= '1';
         end if;
 
 
@@ -189,7 +217,7 @@ begin
     if clk = '1' and clk'event then
       if rst = '1' then
         address_reg <= (others => '0');
-      elsif(en_incr = '1') then
+      elsif(incr_address = '1') then
         address_reg <= address_next;
       else
         address_reg <= address_base;
@@ -219,7 +247,7 @@ begin
 
   max_addr_reached <= '1' when count = (unsigned(dma_instr.move_size) - 1) else '0';
 
-  incoming_data_fifo : fifo_generator_0
+  incoming_data_fifo : fifo_generator_v9_3
     port map (
       clk        => clk,
       srst       => rst,
