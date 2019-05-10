@@ -6,3 +6,10 @@
 !hdl/modules/IPs/synth/*
 !hdl/modules/IPs/*.xci
 *example_test/*
+**/sim_build
+**/build
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
