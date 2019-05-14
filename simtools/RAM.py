@@ -22,6 +22,8 @@ class RAM():
         if self.dout is not None:
             cocotb.fork(self.__dout())
 
+        cocotb.fork(self.__din())
+        
     def load(self, data):
         if isinstance(data, list):
             d = dict(enumerate(data))

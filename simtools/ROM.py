@@ -4,8 +4,13 @@ from cocotb.binary import BinaryValue
 
 class ROM():
     
-    SIZES= {
-        '2K' : 2048
+    SIZES = {
+        '1K' : 2**10,
+        '2K' : 2**11,
+        '4K' : 2**12,
+        '8K' : 2**13,
+        '16K': 2**14,
+        '32K': 2**15
     }
 
     def __init__(self, clk, address, rden, dout=None, size='2K'):

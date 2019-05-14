@@ -47,7 +47,7 @@ def test_memmove(dut):
                   address=dut.address,
                   din=dut.dout,
                   rden = 0,
-                  wren=dut.wr_en,
+                  wren=dut.dv,
                   size='2K')
     
     # wr_en is a delayed copy of rd_rq
@@ -64,8 +64,6 @@ def test_memmove(dut):
     
     for _ in range(5):
         yield RisingEdge(dut.clk)
-
-  
 
     src = rom_src.read(range(0,100,2))
     dst = ram_dst.read(range(0x80,0xB2,1))
