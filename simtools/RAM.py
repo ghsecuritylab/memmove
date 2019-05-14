@@ -2,29 +2,28 @@ import cocotb
 from cocotb.triggers import RisingEdge
 from cocotb.binary import BinaryValue
 
-class ROM():
+class RAM():
     
-    SIZES = {
-        '1K' : 2**10,
-        '2K' : 2**11,
-        '4K' : 2**12,
-        '8K' : 2**13,
-        '16K': 2**14,
-        '32K': 2**15
+    SIZES= {
+        '2K' : 2048
     }
 
-    def __init__(self, clk, address, rden, dout=None, size='2K'):
+    def __init__(self, clk, address, din, wren, rden, dout=None, size=2048):
         self.clk = clk
         self.address = address
         self.rden = rden
-        self.size = ROM.SIZES[size]
         self.dout = dout
+        self.din = din
+        self.wren = wren
+        self.size = RAM.SIZES[size]
 
         self.clear()
 
         if self.dout is not None:
             cocotb.fork(self.__dout())
 
+        cocotb.fork(self.__din())
+        
     def load(self, data):
         if isinstance(data, list):
             d = dict(enumerate(data))
@@ -42,6 +41,24 @@ class ROM():
             return [self.array[address] for address in addresses]
         else:
             raise TypeError('{} not supported'.format(type(addresses)))
+        
+    @cocotb.coroutine
+    def __dout(self):
+        while True:
+            yield RisingEdge(self.clk)
+            if any((c in self.address.value.binstr) for c in 'UX'):
+                self.dout <= BinaryValue('U', len(self.address.value))
+            else:
+                self.dout <= self.array[self.address.value.integer]
+
+    @cocotb.coroutine
+    def __din(self):
+        while True:
+            yield RisingEdge(self.clk)
+            # the address must be valid
+            if not any((c in self.address.value.binstr) for c in 'UX'):
+                if self.wren == 1:
+                    self.array[self.address.value.integer] = self.din.value.integer
 
     def dump(self, addresses=None):
         if addresses is None:
@@ -52,14 +69,6 @@ class ROM():
             print("0x{:010X} : 0x{:010X}".format(address,self.array[address]))
         print("### END DUMP ###")
 
-    @cocotb.coroutine
-    def __dout(self):
-        while True:
-            yield RisingEdge(self.clk)
-            if any((c in self.address.value.binstr) for c in 'UX'):
-                self.dout <= BinaryValue('U', len(self.address.value))
-            else:
-                self.dout <= self.array[self.address.value.integer]
-
     def clear(self):
         self.array = [0 for _ in range(self.size)]
+

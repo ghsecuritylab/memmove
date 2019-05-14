@@ -20,7 +20,7 @@ def test_fsm_cmd(dut):
 
     cocotb.fork(Clock(dut.clk, 10, units='ns').start())
     yield reset(dut)
-    rom = ROM(dut.clk, dut.address, dut.din, dut.rd_en, size=2048)
+    rom = ROM(dut.clk, dut.address, dut.din, dut.rd_en, size='2K')
     rom.load({0:0x40000000,  #src address
               1:0x50000000,  #dst address
               2:0x01000001,  #src incr | dst incr
