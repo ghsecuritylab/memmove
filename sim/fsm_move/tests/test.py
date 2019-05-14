@@ -18,7 +18,7 @@ def reset(dut):
 @cocotb.test()
 def test_fsm_move(dut):
 
-    rom = ROM(dut.clk, dut.address, dut.din, dut.rd_rq, size=2048)
+    rom = ROM(dut.clk, dut.address, dut.din, dut.rd_rq, size='2K')
     rom.load(list(range(10, 2058))) 
 
     # wr_en is a delayed copy of rd_rq
