@@ -13,3 +13,24 @@
 __pycache__/
 *.py[cod]
 *$py.class
+
+# Xilinx SDK garbage
+\.metadata/
+memmv.sdk/design_1_wrapper_hw_platform_0/design_1_wrapper\.bit
+memmv.sdk/RemoteSystemsTempFiles/
+memmv.sdk/SDK\.log
+
+*.bin
+*.d
+*.o
+*.elf
+
+memmv.sdk/memmv_bsp/ps7_cortexa9_0/include/
+memmv.sdk/memmv_bsp/ps7_cortexa9_0/lib/
+memmv.sdk/memmv_fsbl_bsp/ps7_cortexa9_0/include/
+memmv.sdk/memmv_fsbl_bsp/ps7_cortexa9_0/lib/
+memmv.sdk/memmv_fsbl/Debug/src/subdir\.mk
+memmv.sdk/memmv_fsbl/Debug/memmv_fsbl\.elf\.size
+.directory
+
+*.log
