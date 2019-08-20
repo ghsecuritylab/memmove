@@ -8,7 +8,7 @@ class RAM():
         '2K' : 2048
     }
 
-    def __init__(self, clk, address, din, wren, rden, dout=None, size=2048):
+    def __init__(self, clk, address, din, wren, rden, dout=None, size='2K'):
         self.clk = clk
         self.address = address
         self.rden = rden
