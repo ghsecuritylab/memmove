@@ -34,3 +34,5 @@ memmv.sdk/memmv_fsbl/Debug/memmv_fsbl\.elf\.size
 .directory
 
 *.log
+
+memmv\.sdk/webtalk/

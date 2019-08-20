@@ -130,8 +130,17 @@ architecture structural of memmv is
     signal source_incr : std_logic_vector(BUS_ADDR_WIDTH/2 - 1 downto 0);
     signal dest_incr   : std_logic_vector(BUS_ADDR_WIDTH/2 - 1 downto 0);
     signal move_size   : std_logic_vector(BUS_ADDR_WIDTH - 1 downto 0);
+    signal start_int   : std_logic;
 
 begin
+
+  pulse_gen: entity work.pulse_generator
+    port map(
+      clk => clk,
+      rst => rst,
+      pulse_activate => start,
+      pulse_out      => start_int
+      );
 
   fsm_cmd_01: fsm_cmd
       port map(
@@ -139,7 +148,7 @@ begin
         rst => rst,
 
         -- commblock side
-        start   => start,
+        start   => start_int,
         din     => cmd_in,
         address => cmd_addr,
         rd_en   => cmd_fetch,

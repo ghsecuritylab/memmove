@@ -102,7 +102,7 @@ void process_echo_request(void *p)
 			   xil_printf("Write: address: %d  data: %d \n\r",recv_buf[1],recv_buf[2]);
 			   break;
 		   case WRITE_MEM:
-			   memcpy((int*)comblock_TDPR_addr,recv_buf+1,16);
+			   memcpy((int*)comblock_TDPR_addr,recv_buf+2,16);
 			   xil_printf("Write mem address: 0x%x",recv_buf[1]);
 
 			   for (int i=0; i<4; i++){
@@ -167,7 +167,7 @@ void echo_application_thread()
 		if ((new_sd = lwip_accept(sock, (struct sockaddr *)&remote, (socklen_t *)&size)) > 0) {
 			sys_thread_new("echos", process_echo_request,
 				(void*)new_sd,
-				THREAD_STACKSIZE,
+				THREAD_STACKSIZE*2,
 				DEFAULT_THREAD_PRIO);
 		}
 	}
